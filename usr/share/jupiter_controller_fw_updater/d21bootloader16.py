@@ -1070,7 +1070,9 @@ def get_devices_json():
              'is_bootloader': item['product_id'] == JUPITER_BOOTLOADER_USB_PID,
              'path': item['path'].decode('utf-8') }
            for item in rawdevs ]
-
+  #Python-HID 1.0.6 added bus_type. https://github.com/apmorton/pyhidapi/commit/e1aa5f59f21fe186695880dba930069164549c83
+  #This field breaks json serialize so we remove it from the dict.
+  devs[0].pop('bus_type')
   print(json.dumps(devs))
 
 @cli.command(name='getappbuildtimestamp')
