@@ -25,8 +25,11 @@ if [[ "${FLOCKER:-}" != "$0" ]] ; then exec env FLOCKER="$0" flock -e -w 20 "$0"
 ACTION=$1
 DEVBASE=$2
 DEVICE="/dev/${DEVBASE}"
-DECK_UID=$(id -u deck)
-DECK_GID=$(id -g deck)
+#Get username from DECKY_USER env since that already gets set by the handheld package
+#Subject to change
+USERNAME=$(printenv DECKY_USER)
+DECK_UID=$(id -u "${USERNAME}")
+DECK_GID=$(id -g "${USERNAME}")
 
 send_steam_url()
 {
@@ -143,7 +146,7 @@ do_mount()
                                  "block_devices/${DEVBASE}"      \
                                  Filesystem Mount                \
                                  'a{sv}' 4                       \
-                                 as-user s deck                  \
+                                 as-user s "${USERNAME}"         \
                                  auth.no_user_interaction b true \
                                  fstype s "$FSTYPE"              \
                                  options s "$OPTS")
@@ -184,7 +187,7 @@ do_mount()
     elif [[ "${STEAMOS_BTRFS_SDCARD_COMPATDATA_BIND_MOUNT:-0}" == "1" ]] && \
         [[ "${ID_FS_TYPE}" == "vfat" || "${ID_FS_TYPE}" == "exfat" || "${ID_FS_TYPE}" == "ntfs" ]]; then
         # bind mount compatdata folder from internal disk
-        DECK_HOME="$(getent passwd deck | cut -d: -f6)"
+        DECK_HOME="$(getent passwd "${USERNAME}" | cut -d: -f6)"
         mkdir -p "${mount_point}"/steamapps/compatdata
         chown "${DECK_UID}:${DECK_GID}" "${mount_point}"/steamapps{,/compatdata}
         mkdir -p "${DECK_HOME}"/.local/share/Steam/steamapps/compatdata
