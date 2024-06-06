@@ -25,10 +25,10 @@ if [[ "${FLOCKER:-}" != "$0" ]] ; then exec env FLOCKER="$0" flock -e -w 20 "$0"
 ACTION=$1
 DEVBASE=$2
 DEVICE="/dev/${DEVBASE}"
-#Get username from DECKY_USER env since that already gets set by the handheld package
+#Assume user is ID 1000 since that gets assumed by SteamOS BTRFS
 #Subject to change
-USERNAME=$(sed -ne 's/DECKY_USER=//p' /etc/environment.d/handheld.conf)
-DECK_UID=$(id -u "${USERNAME}")
+USERNAME=$(id -nu 1000)
+DECK_UID=1000
 DECK_GID=$(id -g "${USERNAME}")
 
 send_steam_url()
