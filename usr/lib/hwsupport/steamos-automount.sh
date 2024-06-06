@@ -27,7 +27,7 @@ DEVBASE=$2
 DEVICE="/dev/${DEVBASE}"
 #Get username from DECKY_USER env since that already gets set by the handheld package
 #Subject to change
-USERNAME=$(printenv DECKY_USER)
+USERNAME=$(sed -ne 's/DECKY_USER=//p' /etc/environment.d/handheld.conf)
 DECK_UID=$(id -u "${USERNAME}")
 DECK_GID=$(id -g "${USERNAME}")
 
