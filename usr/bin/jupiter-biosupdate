@@ -187,6 +187,12 @@ fi
 # Die early if inhibited
 [[ ! -f $BIOS_INHIBIT_FILE ]] || die "Bios updates inhibited, no action ($BIOS_INHIBIT_FILE)"
 
+# Finish early if service is masked or unit is not galileo/jupiter
+SYS_ID="$(cat /sys/devices/virtual/dmi/id/product_name)"
+if [[ $(systemctl is-enabled jupiter-biosupdate.service) == "masked" || ! ":Jupiter:Galileo:" =~ ":$SYS_ID:" ]] ; then
+  finish 0 no "Bios updates inhibited, no action (Service masked) or unit is not Galileo/Jupiter"
+fi
+
 # Print action
 modestring="Performing"
 [[ -z $checkmode ]] || modestring="Checking for"
