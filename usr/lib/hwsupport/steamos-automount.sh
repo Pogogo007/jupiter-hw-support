@@ -29,7 +29,7 @@ DEVICE="/dev/${DEVBASE}"
 #Subject to change
 USERNAME=$(id -nu 1000)
 DECK_UID=1000
-DECK_GID=$(id -g "${USERNAME}")
+DECK_GID=1000
 
 send_steam_url()
 {
@@ -39,7 +39,7 @@ send_steam_url()
   if pgrep -x "steam" > /dev/null; then
       # TODO use -ifrunning and check return value - if there was a steam process and it returns -1, the message wasn't sent
       # need to retry until either steam process is gone or -ifrunning returns 0, or timeout i guess
-      systemd-run -M ${DECK_UID}@ --user --collect --wait sh -c "./.steam/root/ubuntu12_32/steam steam://${command}/${encoded@Q}"
+      systemd-run --uid=${DECK_UID} --collect --wait sh -c "/usr/bin/steam steam://${command}/${encoded@Q}"
       echo "Sent URL to steam: steam://${command}/${arg} (steam://${command}/${encoded})"
   else
       echo "Could not send steam URL steam://${command}/${arg} (steam://${command}/${encoded}) -- steam not running"
